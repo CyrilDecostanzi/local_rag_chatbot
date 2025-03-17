@@ -43,8 +43,8 @@ Retrieval-Augmented Generation enhances generative AI models by integrating exte
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/CyrilDecostanzi/rag_faiss.git
-cd rag_faiss
+git clone https://github.com/CyrilDecostanzi/local_rag_chatbot.git
+cd local_rag_chatbot
 ```
 
 ### Step 2: Install Dependencies
