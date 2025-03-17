@@ -128,3 +128,9 @@ Enter your questions directly into the terminal:
 
 -   **FAISS Issues**: Ensure compatibility by installing `faiss-cpu` compatible with your OS and Python version.
 -   **LLM Issues**: Confirm you've successfully pulled your model via `ollama pull your_model_name`.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
