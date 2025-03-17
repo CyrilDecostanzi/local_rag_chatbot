@@ -9,15 +9,19 @@ import faiss
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 # Log configuration
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s")
 
-# Default parameters
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
-INDEX_DIR = "faiss_index"
+EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
+INDEX_DIR = os.getenv("INDEX_DIR", "faiss_index")
+CHUNK_SIZE = os.getenv("CHUNK_SIZE", 500)
+CHUNK_OVERLAP = os.getenv("CHUNK_OVERLAP", 50)
 
 def load_and_process_files(data_path):
     """

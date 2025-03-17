@@ -2,12 +2,17 @@
 import logging
 import ollama
 from retrieval import retrieve_documents
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 # Log configuration
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s")
 
-SYSTEM_PROMPT = """Tu es un assistant IA, tu dois fournir des informations précises sur les documents qu'on te fourni, tu es spécialiste automobile et tu dois citer les source dans les documents que tu consulte. Tu repond en français, si l'information n'est pas présente tu ne l'invente pas repond simplement que tu ne dispose pas de l'information."""
-
+LLM_MODEL = os.getenv("LLM_MODEL", "mistral")
+SYSTEM_PROMPT = os.getenv("SYSTEM_PROMPT")
 
 def ask_llm(query):
     """
@@ -27,7 +32,7 @@ Now, answer this question in detail:
         """.strip()
     
         logging.info("Sending prompt to the LLM...")
-        response = ollama.chat(model="mistral-small", messages=[{"role": "user", "content": prompt},{"role": "system", "content": SYSTEM_PROMPT},])
+        response = ollama.chat(model=LLM_MODEL, messages=[{"role": "user", "content": prompt},{"role": "system", "content": SYSTEM_PROMPT},])
         return response.get("message", {}).get("content", "No response obtained.")
     except Exception as e:
         logging.error(f"Error calling the LLM: {e}")

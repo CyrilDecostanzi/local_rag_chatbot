@@ -5,14 +5,21 @@ import logging
 
 import faiss
 from sentence_transformers import SentenceTransformer, CrossEncoder
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 # Log configuration
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s")
 
 # Parameters
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-INDEX_DIR = "faiss_index"
-DEFAULT_TOP_K = 3
+EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
+INDEX_DIR = os.getenv("INDEX_DIR", "faiss_index")
+DEFAULT_TOP_K = int(os.getenv("DEFAULT_TOP_K", 3))
+USE_RERANKING = os.getenv("USE_RERANKING", "True").lower() == "true"
+RERANK_MODEL = os.getenv("RERANK_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 # Loading the embedding model
 logging.info(f"Loading embedding model '{EMBEDDING_MODEL_NAME}'...")
@@ -30,10 +37,9 @@ with open(docs_path, "rb") as f:
 
 # Optional: loading a cross-encoder for re-ranking
 # Use a re-ranking model like "cross-encoder/ms-marco-MiniLM-L-6-v2"
-USE_RERANKING = True
 if USE_RERANKING:
     logging.info("Loading cross-encoder for re-ranking...")
-    reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+    reranker = CrossEncoder(RERANK_MODEL)
 
 def retrieve_documents(query, top_k=DEFAULT_TOP_K, rerank=USE_RERANKING):
     """
