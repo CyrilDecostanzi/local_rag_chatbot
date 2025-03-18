@@ -2,6 +2,7 @@
 import os
 import pickle
 import logging
+import operator
 
 import faiss
 from sentence_transformers import SentenceTransformer, CrossEncoder
@@ -17,6 +18,7 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(
 EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
 INDEX_DIR = os.getenv("INDEX_DIR", "faiss_index")
 DEFAULT_TOP_K = int(os.getenv("DEFAULT_TOP_K", 3))
+RETRIEVAL_MULTIPLIER = int(os.getenv("RETRIEVAL_MULTIPLIER", 3))
 USE_RERANKING = os.getenv("USE_RERANKING", "True").lower() == "true"
 RERANK_MODEL = os.getenv("RERANK_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
 
@@ -44,16 +46,22 @@ def retrieve_documents(query, top_k=DEFAULT_TOP_K, rerank=USE_RERANKING):
     # Retrieve the `top_k` closest documents to the query.
     # If rerank=True, re-order the results with the cross-encoder.
     query_embedding = embed_model.encode([query])
-    distances, indices = index.search(query_embedding, top_k * 3)  # retrieve more for re-ranking
-    candidates = [documents[i] for i in indices[0] if i >= 0]
+    D, I = index.search(query_embedding, top_k * RETRIEVAL_MULTIPLIER)
+    candidates = [documents[i] for i in I[0] if 0 <= i < len(documents)]
     
     if rerank and candidates:
         logging.info("Re-ranking documents...")
-        # Prepare pairs (query, candidate) for the cross-encoder
         pairs = [(query, doc) for doc in candidates]
         scores = reranker.predict(pairs)
-        # Sort documents by descending score
-        ranked = sorted(zip(candidates, scores), key=lambda x: x[1], reverse=True)
+        ranked = sorted(zip(candidates, scores), key=operator.itemgetter(1), reverse=True)
+        batch_size = 32
+        scores = []
+        for i in range(0, len(pairs), batch_size):
+            batch_pairs = pairs[i:i + batch_size]
+            batch_scores = reranker.predict(batch_pairs)
+            scores.extend(batch_scores)
+            batch_scores = reranker.predict(batch_pairs)
+            scores.extend(batch_scores)
         # Select top_k
         retrieved_texts = [doc for doc, score in ranked[:top_k]]
     else:
