@@ -24,10 +24,8 @@ CHUNK_SIZE = os.getenv("CHUNK_SIZE", 500)
 CHUNK_OVERLAP = os.getenv("CHUNK_OVERLAP", 50)
 
 def load_and_process_files(data_path):
-    """
-    Load and split files (.txt, .pdf) from the `data_path` directory
-    into text chunks.
-    """
+    # Load and split files (.txt, .pdf) from the `data_path` directory
+    # into text chunks.
     all_texts = []
     for file in os.listdir(data_path):
         file_path = os.path.join(data_path, file)
@@ -59,9 +57,7 @@ def load_and_process_files(data_path):
     return chunks
 
 def index_documents(texts, embed_model, index):
-    """
-    Encode and add texts to the FAISS index.
-    """
+    # Encode and add texts to the FAISS index.
     if not texts:
         logging.error("No text to index.")
         return
@@ -71,9 +67,7 @@ def index_documents(texts, embed_model, index):
     logging.info(f"✅ {len(texts)} chunks indexed in FAISS.")
 
 def save_faiss_index(index, documents, output_dir=INDEX_DIR):
-    """
-    Save the FAISS index and original texts.
-    """
+    # Save the FAISS index and original texts.
     os.makedirs(output_dir, exist_ok=True)
     index_path = os.path.join(output_dir, "index.faiss")
     docs_path = os.path.join(output_dir, "documents.pkl")

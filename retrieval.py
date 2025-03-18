@@ -10,7 +10,6 @@ import os
 
 load_dotenv()
 
-
 # Log configuration
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s - %(message)s")
 
@@ -41,11 +40,9 @@ if USE_RERANKING:
     logging.info("Loading cross-encoder for re-ranking...")
     reranker = CrossEncoder(RERANK_MODEL)
 
-def retrieve_documents(query, top_k=DEFAULT_TOP_K, rerank=USE_RERANKING):
-    """
-    Retrieve the `top_k` closest documents to the query.
-    If rerank=True, re-order the results with the cross-encoder.
-    """
+def retrieve_documents(query, top_k=DEFAULT_TOP_K, rerank=USE_RERANKING):  
+    # Retrieve the `top_k` closest documents to the query.
+    # If rerank=True, re-order the results with the cross-encoder.
     query_embedding = embed_model.encode([query])
     distances, indices = index.search(query_embedding, top_k * 3)  # retrieve more for re-ranking
     candidates = [documents[i] for i in indices[0] if i >= 0]
