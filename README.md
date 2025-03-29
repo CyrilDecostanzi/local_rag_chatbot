@@ -5,7 +5,8 @@ This repository provides a detailed and practical implementation of a Retrieval-
 ---
 ## How it works
 
-![image](https://github.com/user-attachments/assets/ea7e6be7-24a4-4715-978a-7b1e878eaf6d)
+![image](https://github.com/user-attachments/assets/a816b9de-a0dd-406b-b382-0e335ff91902)
+
 
 
 ## 🚀 Features
