@@ -3,6 +3,10 @@
 This repository provides a detailed and practical implementation of a Retrieval-Augmented Generation (RAG) chatbot, fully operational on your local machine. It leverages the Ollama ecosystem to interact with powerful Large Language Models (LLMs) such as Mistral 7B or any other model suitable for your hardware resources, and uses FAISS for efficient semantic retrieval. This setup allows you to effortlessly query your personal document collections and obtain accurate, context-aware answers.
 
 ---
+## How it works
+
+![image](https://github.com/user-attachments/assets/ea7e6be7-24a4-4715-978a-7b1e878eaf6d)
+
 
 ## 🚀 Features
 
