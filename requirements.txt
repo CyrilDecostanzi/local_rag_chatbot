@@ -50,7 +50,7 @@ nvidia-nvtx-cu12==12.4.127
 ollama==0.4.7
 orjson==3.10.15
 packaging==24.2
-pillow==11.1.0
+pillow==10.1.0
 propcache==0.3.0
 pydantic==2.10.6
 pydantic-settings==2.8.1

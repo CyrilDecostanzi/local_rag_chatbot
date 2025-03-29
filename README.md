@@ -3,10 +3,10 @@
 This repository provides a detailed and practical implementation of a Retrieval-Augmented Generation (RAG) chatbot, fully operational on your local machine. It leverages either the Ollama ecosystem to interact with powerful Large Language Models (LLMs) such as Mistral 7B, or OpenAI's API for cloud-based models. The system uses FAISS for efficient semantic retrieval, allowing you to effortlessly query your personal document collections and obtain accurate, context-aware answers.
 
 ---
+
 ## How it works
 
 ![image](https://github.com/user-attachments/assets/a816b9de-a0dd-406b-b382-0e335ff91902)
-
 
 ## 🚀 Features
 
@@ -64,7 +64,38 @@ Ensure Python 3.8+ is installed.
 pip install -r requirements.txt
 ```
 
-### Step 3: Set Up LLM Provider
+### Step 3: Install Tkinter (for GUI)
+
+Tkinter is required for the graphical user interface.
+
+**Ubuntu/Debian:**
+
+```bash
+sudo apt-get install python3-tk
+```
+
+**Fedora:**
+
+```bash
+sudo dnf install python3-tkinter
+```
+
+**CentOS/RHEL:**
+
+```bash
+sudo yum install python3-tkinter
+```
+
+**macOS:**
+
+```bash
+brew install python-tk
+```
+
+**Windows:**
+Tkinter is included with the standard Python installer.
+
+### Step 4: Set Up LLM Provider
 
 #### Option A: Local Models with Ollama
 
@@ -134,10 +165,12 @@ This will automatically:
 
 ## 🤖 Using the Chatbot
 
-Start your chatbot session:
+### Command Line Interface
+
+Start your chatbot session via the command-line:
 
 ```bash
-python main.py
+python app.py --cli
 ```
 
 Enter your questions directly into the terminal:
@@ -145,6 +178,27 @@ Enter your questions directly into the terminal:
 ```bash
 💬 Ask a question (or 'exit' to quit): How does RAG improve query accuracy?
 ```
+
+### Graphical User Interface (GUI)
+
+Alternatively, you can use the full-featured Tkinter GUI:
+
+```bash
+python app.py --gui
+```
+
+Or simply:
+
+```bash
+python app.py
+```
+
+The GUI provides:
+
+-   A modern chat interface
+-   Document management (upload, indexing, deletion)
+-   LLM settings configuration
+-   Easy navigation between different functions
 
 ---
 
