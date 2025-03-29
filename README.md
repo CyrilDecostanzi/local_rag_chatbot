@@ -17,7 +17,8 @@ This repository provides a detailed and practical implementation of a Retrieval-
     -   Local: Mistral 7B, Llama 2, or any other Ollama-supported model
     -   Cloud: GPT-3.5-turbo, GPT-4, or other OpenAI models
 -   **Supports Multiple Formats**: Easily index `.txt` and `.pdf` files
--   **Interactive CLI Interface**: User-friendly command-line interaction
+-   **Modern Web Interface**: Beautiful and responsive Gradio-based UI for easy interaction
+-   **Interactive CLI Interface**: User-friendly command-line interaction for scriptable usage
 
 ---
 
@@ -152,7 +153,7 @@ SYSTEM_PROMPT="You are a helpful AI assistant."
 Place documents in the `./data` folder (default path), then run:
 
 ```bash
-python index_documents.py
+python app.py --index
 ```
 
 This will automatically:
@@ -161,13 +162,41 @@ This will automatically:
 -   Generate embeddings
 -   Populate the FAISS index
 
+You can also index documents directly from the web interface or GUI.
+
 ---
 
 ## 🤖 Using the Chatbot
 
+### Web Interface (Recommended)
+
+Launch the modern web interface with:
+
+```bash
+python app.py
+# or explicitly with
+python app.py --web
+```
+
+The web interface is the recommended way to use the application, offering:
+
+-   Beautiful and responsive UI
+-   Intuitive document management
+-   Real-time chat experience
+-   Complete settings configuration
+-   Performance optimization
+
+### Graphical User Interface (Legacy)
+
+The Tkinter-based GUI is still available:
+
+```bash
+python app.py --gui
+```
+
 ### Command Line Interface
 
-Start your chatbot session via the command-line:
+For scriptable or terminal-based usage:
 
 ```bash
 python app.py --cli
@@ -179,27 +208,6 @@ Enter your questions directly into the terminal:
 💬 Ask a question (or 'exit' to quit): How does RAG improve query accuracy?
 ```
 
-### Graphical User Interface (GUI)
-
-Alternatively, you can use the full-featured Tkinter GUI:
-
-```bash
-python app.py --gui
-```
-
-Or simply:
-
-```bash
-python app.py
-```
-
-The GUI provides:
-
--   A modern chat interface
--   Document management (upload, indexing, deletion)
--   LLM settings configuration
--   Easy navigation between different functions
-
 ---
 
 ## 🛠 Troubleshooting
@@ -210,6 +218,9 @@ The GUI provides:
     -   Verify your API key is correctly set in the `.env` file
     -   Check your OpenAI account has sufficient credits
     -   Ensure you're using a supported model
+-   **Gradio Web Interface Issues**:
+    -   Make sure you have installed Gradio: `pip install gradio>=4.0.0`
+    -   If the web interface fails to launch, it will automatically fall back to the Tkinter GUI
 
 ---
 
