@@ -8,11 +8,6 @@ This repository provides a detailed and practical implementation of a Retrieval-
 ![image](https://github.com/user-attachments/assets/a816b9de-a0dd-406b-b382-0e335ff91902)
 
 
-
-## How it works
-
-![image](https://github.com/user-attachments/assets/a816b9de-a0dd-406b-b382-0e335ff91902)
-
 ## 🚀 Features
 
 -   **Flexible LLM Integration**: Choose between local models via Ollama or cloud-based models via OpenAI
