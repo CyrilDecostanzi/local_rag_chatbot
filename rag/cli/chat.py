@@ -43,7 +43,7 @@ def main() -> None:
         messages.extend(history)
         messages.append(HumanMessage(content=query))
 
-        answer = chain.invoke({"question": query})
+        answer = chain.invoke({"question": query, "messages": messages})
         print("\n🤖 Model's response:")
         print(answer)
 

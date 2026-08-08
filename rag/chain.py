@@ -1,45 +1,34 @@
 """RAG chain built with LangChain Expression Language (LCEL).
 
-The chain is a plain Runnable: prompt -> llm -> StrOutputParser. It takes a
-dict {"question": ...} and returns the answer string. Conversation memory is
-not implemented in this chain; callers can manage/inject history externally.
+The chain takes a dict {"question": str, "messages": list} and returns the
+answer string. ``messages`` should be a list of LangChain message objects
+(SystemMessage, HumanMessage, AIMessage) that represent the system prompt,
+conversation history, and the current user question. The retriever appends
+a system-level context block so the model can ground its answer in the
+indexed documents.
+"""
+from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
 
 from rag.config import Settings
 from rag.llm import build_llm
 from rag.retriever import build_retriever
 
-SYSTEM_TEMPLATE = """You are a helpful AI assistant. Answer the user's question
-using ONLY the provided context. If the context does not contain the answer,
-say you don't know — do not make things up.
+CONTEXT_TEMPLATE = """Use the following context to answer the question:
 
-Context:
-{context}
-"""
+{context}"""
 
 
 def build_chain(settings: Settings):
     retriever = build_retriever(settings)
     llm = build_llm(settings)
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", SYSTEM_TEMPLATE),
-            ("human", "{question}"),
-        ]
-    )
-
-    def format_context(inputs: dict) -> dict:
+    def invoke_with_context(inputs: dict) -> str:
         question = inputs["question"]
+        messages = list(inputs.get("messages", []))
         docs = retriever.invoke(question)
         context = "\n\n".join(doc.page_content for doc in docs)
-        return {"context": context, "question": question}
+        messages.append(SystemMessage(content=CONTEXT_TEMPLATE.format(context=context)))
+        return StrOutputParser().invoke(llm.invoke(messages))
 
-    chain = (
-        format_context
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
-    return chain
+    return invoke_with_context
