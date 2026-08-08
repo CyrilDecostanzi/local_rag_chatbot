@@ -2,8 +2,7 @@
 
 The chain is a plain Runnable: prompt -> llm -> StrOutputParser. It takes a
 dict {"question": ...} and returns the answer string. Conversation memory is
-handled at the CLI layer (see cli.py) by injecting history into the prompt.
-"""
+not implemented in this chain; callers can manage/inject history externally.
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
