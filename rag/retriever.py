@@ -14,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 def build_retriever(settings: Settings):
     embeddings = HuggingFaceEmbeddings(model_name=settings.embedding_model)
+    if not settings.allow_dangerous_deserialization:
+        raise PermissionError(
+            "Loading a FAISS index requires unpickling data, which can be unsafe "
+            "if the index directory is not trusted. Set "
+            "ALLOW_DANGEROUS_DESERIALIZATION=true in your environment to proceed."
+        )
     vectorstore = FAISS.load_local(
         settings.index_dir,
         embeddings,

@@ -38,6 +38,8 @@ class Settings:
     openai_model: str = "gpt-3.5-turbo"
     openai_api_key: str = ""
     system_prompt: str = "You are a helpful AI assistant."
+    # Security
+    allow_dangerous_deserialization: bool = False
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -62,4 +64,7 @@ class Settings:
             system_prompt=_get(
                 "SYSTEM_PROMPT", "You are a helpful AI assistant."
             ),
+            allow_dangerous_deserialization=_get(
+                "ALLOW_DANGEROUS_DESERIALIZATION", "false"
+            ).lower() == "true",
         )

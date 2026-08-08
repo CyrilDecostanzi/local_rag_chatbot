@@ -5,7 +5,7 @@ Usage:
 """
 import logging
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from rag.chain import build_chain
 from rag.config import Settings
@@ -38,12 +38,12 @@ def main() -> None:
         if query.lower() == "exit":
             break
 
-        # Build the message list: system + history + current question.
-        messages = [SystemMessage(content=settings.system_prompt)]
-        messages.extend(history)
-        messages.append(HumanMessage(content=query))
+        try:
+            answer = chain.invoke({"question": query, "history": history})
+        except Exception:
+            logging.exception("Error during chain invocation — skipping this turn.")
+            continue
 
-        answer = chain.invoke({"question": query, "messages": messages})
         print("\n🤖 Model's response:")
         print(answer)
 

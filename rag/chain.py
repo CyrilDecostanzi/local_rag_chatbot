@@ -1,34 +1,52 @@
 """RAG chain built with LangChain Expression Language (LCEL).
 
-The chain takes a dict {"question": str, "messages": list} and returns the
-answer string. ``messages`` should be a list of LangChain message objects
-(SystemMessage, HumanMessage, AIMessage) that represent the system prompt,
-conversation history, and the current user question. The retriever appends
-a system-level context block so the model can ground its answer in the
-indexed documents.
+The chain is a plain Runnable: prompt -> llm -> StrOutputParser. It takes a
+dict {"question": str, "history": list} and returns the answer string.
+Conversation history is injected by the caller (see rag/cli/chat.py).
 """
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import BaseMessage
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from rag.config import Settings
 from rag.llm import build_llm
 from rag.retriever import build_retriever
 
-CONTEXT_TEMPLATE = """Use the following context to answer the question:
-
-{context}"""
+_CONTEXT_PLACEHOLDER = (
+    "Answer the user's question using ONLY the provided context. If the context\n"
+    "does not contain the answer, say you don't know — do not make things up.\n\n"
+    "Context:\n{context}"
+)
 
 
 def build_chain(settings: Settings):
     retriever = build_retriever(settings)
     llm = build_llm(settings)
 
-    def invoke_with_context(inputs: dict) -> str:
+    # Build the system message by appending the fixed RAG instructions.
+    # Use plain concatenation rather than .format() so that curly braces
+    # in settings.system_prompt are never mis-interpreted as format tokens.
+    system_content = settings.system_prompt + "\n\n" + _CONTEXT_PLACEHOLDER
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_content),
+            MessagesPlaceholder(variable_name="history"),
+            ("human", "{question}"),
+        ]
+    )
+
+    def format_context(inputs: dict) -> dict:
         question = inputs["question"]
-        messages = list(inputs.get("messages", []))
+        history: list[BaseMessage] = inputs.get("history", [])
         docs = retriever.invoke(question)
         context = "\n\n".join(doc.page_content for doc in docs)
-        messages.append(SystemMessage(content=CONTEXT_TEMPLATE.format(context=context)))
-        return StrOutputParser().invoke(llm.invoke(messages))
+        return {"context": context, "question": question, "history": history}
 
-    return invoke_with_context
+    chain = (
+        format_context
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain
