@@ -28,7 +28,10 @@ def build_chain(settings: Settings):
         messages = list(inputs.get("messages", []))
         docs = retriever.invoke(question)
         context = "\n\n".join(doc.page_content for doc in docs)
-        messages.append(SystemMessage(content=CONTEXT_TEMPLATE.format(context=context)))
+        # Insert the context system message before the last HumanMessage so
+        # the message order is: system, history, context, human — which is
+        # expected by most chat model providers.
+        messages.insert(-1, SystemMessage(content=CONTEXT_TEMPLATE.format(context=context)))
         return StrOutputParser().invoke(llm.invoke(messages))
 
     return invoke_with_context
