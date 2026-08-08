@@ -33,8 +33,8 @@ def load_documents(data_path: str, chunk_size: int, chunk_overlap: int):
                 doc.metadata["source"] = filename
             docs.extend(loaded)
             logger.info("Loaded %s (%d chunk(s))", filename, len(loaded))
-        except Exception as e:  # noqa: BLE001 - keep indexing going on bad files
-            logger.error("Error processing %s: %s", filename, e)
+        except Exception:  # noqa: BLE001 - keep indexing going on bad files
+            logger.exception("Error processing %s", filename)
 
     if not docs:
         raise ValueError(f"No supported documents found in {data_path}")
